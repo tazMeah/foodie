@@ -20,5 +20,3 @@ export default function getRecipeResponse(searchParams: SearchParams): Promise<R
 			return response.data;
 		});
 }
-
-// https://api.edamam.com/api/recipes/v2?type=public&q=chicken&app_id=4643c294&app_key=9fbafa480e2cf82ad18286211eec0d48&diet=balanced
