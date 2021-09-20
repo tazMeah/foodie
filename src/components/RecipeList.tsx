@@ -30,7 +30,14 @@ export default function RecipeList() {
 				<button
 					onClick={() => {
 						loadMoreRecipes(recipeSearchResponse._links.next.href).then(
-							(data) => setRecipeSearchResponse(data)
+							(data) => {
+								// copy then modify
+								let moreRecipes = {...recipeSearchResponse};
+								// get the Next link and overwrite
+								moreRecipes._links.next.href = data._links.next.href;
+								data.hits?.forEach(hit => moreRecipes.hits?.push(hit))
+								setRecipeSearchResponse(moreRecipes);
+							}
 						);
 						
 					}}
