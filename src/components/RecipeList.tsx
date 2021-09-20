@@ -5,6 +5,8 @@ import RecipeSearchResponseInterface from "../models/RecipeSearchResponseInterfa
 import RecipeHit from "./RecipeHit";
 import SearchParams from "../models/SearchParams";
 import loadMoreRecipes from "../services/loadMoreRecipes";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import RecipeDetails from "./RecipeDetails";
 
 export default function RecipeList() {
 	const [recipeSearchResponse, setRecipeSearchResponse] =
@@ -21,10 +23,26 @@ export default function RecipeList() {
 			{/* <button onClick={() => {getRecipeResponse()}}>Get axios response</button> */}
 
 			<RecipeSearchForm onSubmit={onSubmit} />
-
-			{recipeSearchResponse?.hits?.map((hit, index) => (
-				<RecipeHit recipe={hit.recipe} _links={hit._links} key={index} />
-			))}
+			<Router>
+				
+				<Switch>
+					<Route path="/:recipeId" exact>
+						
+						<RecipeDetails/>
+					</Route>
+					<Route path="/" exact>
+						{recipeSearchResponse?.hits?.map((hit, index) => (
+							
+								<RecipeHit
+									recipe={hit.recipe}
+									_links={hit._links}
+									key={index}
+								/>
+							
+						))}
+					</Route>
+				</Switch>
+			</Router>
 
 			{recipeSearchResponse && (
 				<button
@@ -32,14 +50,13 @@ export default function RecipeList() {
 						loadMoreRecipes(recipeSearchResponse._links.next.href).then(
 							(data) => {
 								// copy then modify
-								let moreRecipes = {...recipeSearchResponse};
+								let moreRecipes = { ...recipeSearchResponse };
 								// get the Next link and overwrite
 								moreRecipes._links.next.href = data._links.next.href;
-								data.hits?.forEach(hit => moreRecipes.hits?.push(hit))
+								data.hits?.forEach((hit) => moreRecipes.hits?.push(hit));
 								setRecipeSearchResponse(moreRecipes);
 							}
 						);
-						
 					}}
 				>
 					Load More
